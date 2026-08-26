@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kodo List</title>
+    <script src="script.js" defer></script>
+  </head>
+  <style>
+    :root {
+      --bg-color: rgb(21, 10, 0);
+      --bg-border: rgb(74, 38, 4);
+
+      --canvas-color: rgb(41, 20, 0);
+
+      --btn-bg-1: #00000000;
+      --btn-bg-empty-1: rgba(74, 38, 4, 0.439);
+
+      --text: white;
+
+      --transition: all 0.2s ease;
+    }
+
+    :root[data-theme="light"] {
+      --bg-color: rgb(255, 239, 224);
+      --bg-border: rgb(237, 171, 109);
+
+      --btn-bg-1: #00000000;
+      --btn-bg-empty-1: rgba(255, 212, 172, 0.439);
+
+      --text: black;
+    }
+
+    body,
+    html {
+      margin: 0;
+      background-color: var(--bg-color);
+    }
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .toolbar {
+      padding: 0 10px;
+      margin: 0;
+      display: flex;
+      border-bottom: 2px solid var(--bg-border);
+    }
+    .toolbar button {
+      background-color: var(--btn-bg-1);
+      border: none;
+      padding: 10px;
+      color: var(--text);
+    }
+    .toolbar button:hover {
+      background-color: var(--btn-bg-empty-1);
+      transition: var(--transition);
+    }
+    .mainInterface {
+      padding: 0;
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: minmax(15%, 200px) 1fr;
+    }
+    .options {
+      display: block;
+      border-right: 2px solid var(--bg-border);
+    }
+    #mainCanvas {
+      background-color: var(--canvas-color);
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(circle, #888 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .canvasArea {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+  <body>
+    <section class="toolbar">
+      <button>File</button>
+      <button>Edit</button>
+      <button>Settings</button>
+    </section>
+    <section class="mainInterface">
+      <div class="options"></div>
+      <div class="canvasArea">
+        <canvas id="mainCanvas"></canvas>
+      </div>
+    </section>
+  </body>
+</html>
