@@ -5,30 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Kodo List</title>
     <script src="script.js" defer></script>
+    <script src="canvas.js" defer></script>
+    <script src="historyManager.js"></script>
   </head>
   <style>
     :root {
       --bg-color: rgb(21, 10, 0);
       --bg-border: rgb(74, 38, 4);
 
+      --menu-bg: rgb(33, 16, 0);
+
       --canvas-color: rgb(41, 20, 0);
+      --canvas-dots: rgb(74, 38, 4);
 
       --btn-bg-1: #00000000;
       --btn-bg-empty-1: rgba(74, 38, 4, 0.439);
 
-      --text: white;
+      --text: rgb(247, 185, 128);
 
       --transition: all 0.2s ease;
     }
 
     :root[data-theme="light"] {
       --bg-color: rgb(255, 239, 224);
-      --bg-border: rgb(237, 171, 109);
+      --bg-border: rgb(243, 169, 100);
+
+      --menu-bg: rgb(234, 191, 150);
+
+      --canvas-color: rgb(255, 210, 168);
+      --canvas-dots: rgb(181, 109, 41);
 
       --btn-bg-1: #00000000;
       --btn-bg-empty-1: rgba(255, 212, 172, 0.439);
 
-      --text: black;
+      --text: rgb(144, 70, 0);
     }
 
     body,
@@ -39,7 +49,10 @@
     body {
       width: 100vw;
       height: 100vh;
+      margin: 0;
       overflow: hidden;
+      display: grid;
+      grid-template-rows: auto 1fr;
     }
     .toolbar {
       padding: 0 10px;
@@ -61,37 +74,70 @@
       padding: 0;
       margin: 0;
       width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-columns: minmax(15%, 200px) 1fr;
+      position: relative;
     }
     .options {
       display: block;
       border-right: 2px solid var(--bg-border);
-    }
-    #mainCanvas {
-      background-color: var(--canvas-color);
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(circle, #888 1px, transparent 1px);
-      background-size: 20px 20px;
+      height: 100vh;
+      max-width: 200px;
+      min-width: 20%;
+      position: absolute;
+      left: 0;
+      top: 0;
+      z-index: 4;
+      background-color: var(--bg-color);
     }
     .canvasArea {
       margin: 0;
       padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: var(--canvas-color);
+      z-index: 2;
+    }
+    #mainCanvas {
+      background-color: var(--canvas-color);
+    }
+
+    .menu {
+      background-color: var(--menu-bg);
+      padding: 0;
+      margin: 0;
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      max-width: fit-content;
+      z-index: 100;
+    }
+    .menu button {
+      padding: 10px 15px;
+      border: none;
+      color: var(--text);
+      text-align: left;
+      background-color: var(--menu-bg);
+    }
+    .menu button span {
+      margin-left: 30px;
+      opacity: 0.5;
+      font-size: smaller;
+    }
+    .menu button:hover {
+      background-color: var(--btn-bg-empty-1);
+      transition: var(--transition);
     }
   </style>
   <body>
     <section class="toolbar">
-      <button>File</button>
-      <button>Edit</button>
-      <button>Settings</button>
+      <button onclick="toolbarMenu(fileMenuData)">File</button>
+      <button onclick="toolbarMenu(fileMenuData)">Edit</button>
+      <button onclick="toolbarMenu(fileMenuData)">Settings</button>
     </section>
     <section class="mainInterface">
-      <div class="options"></div>
-      <div class="canvasArea">
+      <div class="canvasArea" id="canvasHolder">
         <canvas id="mainCanvas"></canvas>
       </div>
+      <div class="options"></div>
     </section>
   </body>
 </html>
