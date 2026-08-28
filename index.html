@@ -17,6 +17,8 @@
 
       --canvas-color: rgb(41, 20, 0);
       --canvas-dots: rgb(74, 38, 4);
+      --node: rgb(135, 65, 0);
+      --node-border: rgb(219, 140, 65);
 
       --btn-bg-1: #00000000;
       --btn-bg-empty-1: rgba(74, 38, 4, 0.439);
@@ -33,7 +35,7 @@
       --menu-bg: rgb(234, 191, 150);
 
       --canvas-color: rgb(255, 210, 168);
-      --canvas-dots: rgb(181, 109, 41);
+      --canvas-dots: rgb(209, 130, 57);
 
       --btn-bg-1: #00000000;
       --btn-bg-empty-1: rgba(255, 212, 172, 0.439);
@@ -45,6 +47,7 @@
     html {
       margin: 0;
       background-color: var(--bg-color);
+      font-family: monospace;
     }
     body {
       width: 100vw;
@@ -65,6 +68,7 @@
       border: none;
       padding: 10px;
       color: var(--text);
+      font-family: monospace;
     }
     .toolbar button:hover {
       background-color: var(--btn-bg-empty-1);
@@ -116,6 +120,7 @@
       color: var(--text);
       text-align: left;
       background-color: var(--menu-bg);
+      font-family: monospace;
     }
     .menu button span {
       margin-left: 30px;

@@ -4,13 +4,6 @@ let mousePosition = { x: 0, y: 0 };
 
 let currentMenu = null;
 
-//Global listener
-window.addEventListener("mousemove", (event) => {
-  const pos = { x: event.clientX, y: event.clientY };
-  mousePosition = pos;
-  mouseDrag();
-});
-
 function showMenu(menuData, position) {
   const existingMenu = document.querySelector(".menu");
 
