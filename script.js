@@ -1,6 +1,6 @@
-//Initializing things
+//--__--__--INITIALIZING THINGS--__--__--
+
 const history = new HistoryManager();
-let mousePosition = { x: 0, y: 0 };
 
 let currentMenu = null;
 
@@ -40,7 +40,6 @@ function showMenu(menuData, position) {
 
   document.body.appendChild(menu);
 
-  // Close when clicking outside the menu
   setTimeout(() => {
     document.addEventListener("click", closeMenu, { once: true });
   });

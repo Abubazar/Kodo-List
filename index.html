@@ -19,6 +19,7 @@
       --canvas-dots: rgb(74, 38, 4);
       --node: rgb(135, 65, 0);
       --node-border: rgb(219, 140, 65);
+      --node-rope: rgb(254, 197, 144);
 
       --btn-bg-1: #00000000;
       --btn-bg-empty-1: rgba(74, 38, 4, 0.439);
@@ -32,13 +33,16 @@
       --bg-color: rgb(255, 239, 224);
       --bg-border: rgb(243, 169, 100);
 
-      --menu-bg: rgb(234, 191, 150);
+      --menu-bg: rgb(255, 225, 197);
 
       --canvas-color: rgb(255, 210, 168);
       --canvas-dots: rgb(209, 130, 57);
+      --node: rgb(245, 169, 98);
+      --node-border: rgb(219, 140, 65);
+      --node-rope: rgb(226, 166, 109);
 
       --btn-bg-1: #00000000;
-      --btn-bg-empty-1: rgba(255, 212, 172, 0.439);
+      --btn-bg-empty-1: rgba(150, 126, 104, 0.439);
 
       --text: rgb(144, 70, 0);
     }
@@ -81,7 +85,6 @@
       position: relative;
     }
     .options {
-      display: block;
       border-right: 2px solid var(--bg-border);
       height: 100vh;
       max-width: 200px;
@@ -91,6 +94,10 @@
       top: 0;
       z-index: 4;
       background-color: var(--bg-color);
+
+      display: flex;
+      flex-direction: column;
+      padding: 15px;
     }
     .canvasArea {
       margin: 0;
@@ -142,7 +149,9 @@
       <div class="canvasArea" id="canvasHolder">
         <canvas id="mainCanvas"></canvas>
       </div>
-      <div class="options"></div>
+      <div class="options">
+        <button>Add ToDo</button>
+      </div>
     </section>
   </body>
 </html>
