@@ -51,43 +51,6 @@ function showMenu(menuData, position) {
   }
 }
 
-const fileMenuData = {
-  buttons: [
-    {
-      name: "Create new desk",
-      shortcut: "Ctrl+N",
-      action: () => {
-        console.log("create file");
-      },
-    },
-    {
-      name: "Open existing desk",
-      shortcut: "Ctrl+O",
-      action: () => {
-        console.log("open file");
-      },
-    },
-    {
-      name: "Save desk",
-      shortcut: "Ctrl+S",
-      action: () => {
-        console.log("save file");
-      },
-    },
-    {
-      name: "Save desk as",
-      shortcut: "Ctrl+Shift+S",
-      action: () => {
-        console.log("save file as sumn");
-      },
-    },
-  ],
-};
-
-function toolbarMenu(menu) {
-  const fileMenu = showMenu(menu, mousePosition);
-}
-
 function handleKeyDown(e) {
   const mod = e.ctrlKey || e.metaKey;
 

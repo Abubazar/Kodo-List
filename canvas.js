@@ -4,12 +4,87 @@ const canHolder = document.getElementById("canvasHolder");
 const ctx = canvas.getContext("2d");
 const styles = getComputedStyle(document.documentElement);
 
+const themeBtn = document.getElementById("themeBtn");
+const deleteTodoBtn = document.getElementById("deleteTodoBtn");
+
+const addTodoBtn = document.getElementById("addTodoBtn");
+const addTodoDialog = document.getElementById("addTodoDialog");
+const newTodoInput = document.getElementById("newTodoInput");
+const todoEditor = document.getElementById("todoEditor");
+const todoTitle = document.getElementById("todoTitle");
+const todoDone = document.getElementById("todoDone");
+const noSelection = document.querySelector(".noSelection");
+const createBtn = document.querySelector(".createBtn");
+const cancelBtn = document.querySelector(".cancelBtn");
+const closeDialogBtn = document.querySelector(".closeDialog");
+
 const palette = {
   gridDots: styles.getPropertyValue("--canvas-dots").trim(),
   node: styles.getPropertyValue("--node").trim(),
   nodeBorder: styles.getPropertyValue("--node-border").trim(),
   nodeRope: styles.getPropertyValue("--node-rope").trim(),
 };
+
+// --__--__-- THEME --__--__--
+themeBtn.addEventListener("click", () => {
+  const root = document.documentElement;
+  const currentTheme = root.dataset.theme;
+  if (currentTheme === "light") {
+    root.dataset.theme = "dark";
+    themeBtn.textContent = "☀";
+  } else {
+    root.dataset.theme = "light";
+    themeBtn.textContent = "🌙";
+  }
+  palette.gridDots = getComputedStyle(root)
+    .getPropertyValue("--canvas-dots")
+    .trim();
+  palette.node = getComputedStyle(root).getPropertyValue("--node").trim();
+  palette.nodeBorder = getComputedStyle(root)
+    .getPropertyValue("--node-border")
+    .trim();
+  palette.nodeRope = getComputedStyle(root)
+    .getPropertyValue("--node-rope")
+    .trim();
+  refreshCanvas();
+});
+
+deleteTodoBtn.addEventListener("click", () => {
+  if (!focusedNode) return;
+
+  const nodeToDelete = focusedNode;
+  for (let i = allRopes.length - 1; i >= 0; i--) {
+    const rope = allRopes[i];
+
+    if (rope.startNode === nodeToDelete || rope.endNode === nodeToDelete) {
+      allRopes.splice(i, 1);
+    }
+  }
+
+  const nodeIndex = allNodes.indexOf(nodeToDelete);
+
+  if (nodeIndex !== -1) {
+    allNodes.splice(nodeIndex, 1);
+  }
+
+  for (const node of allNodes) {
+    node.leftHooked = false;
+    node.rightHooked = false;
+  }
+
+  for (const rope of allRopes) {
+    rope.startNode[rope.startSide + "Hooked"] = true;
+
+    rope.endNode[rope.endSide + "Hooked"] = true;
+  }
+  focusedNode = null;
+  nodeSelected = null;
+  hookSelected_1 = null;
+  tempRope = null;
+
+  deselectTodo();
+  refreshCanvas();
+});
 
 let canvasPosition = { x: 0, y: 0 };
 let canvasZoom = 1;
@@ -20,6 +95,7 @@ let mouseDownDesk = false;
 let nodeSelected = null;
 let hookSelected_1 = null;
 let tempRope = null;
+let focusedNode = null;
 
 const gridSize = 30;
 const gridDot = 2;
@@ -95,8 +171,31 @@ function refreshCanvas() {
   }
 }
 
+function selectTodo(node) {
+  focusedNode = node;
+
+  noSelection.style.display = "none";
+  todoEditor.style.display = "flex";
+
+  todoTitle.value = node.text;
+  todoDone.checked = node.done;
+
+  refreshCanvas();
+}
+
+function deselectTodo() {
+  focusedNode = null;
+
+  noSelection.style.display = "block";
+  todoEditor.style.display = "none";
+
+  refreshCanvas();
+}
+
+clickedNode = false;
 // --__--__-- EVENT LISTENERS --__--__--
-window.addEventListener("pointerdown", (e) => {
+canvas.addEventListener("pointerdown", (e) => {
+  let clickedNode = false;
   lastMousePos = {
     x: mousePosition.x,
     y: mousePosition.y,
@@ -152,16 +251,21 @@ window.addEventListener("pointerdown", (e) => {
     }
 
     if (allNodes[i].checkClick()) {
+      clickedNode = true;
       nodeSelected = allNodes[i];
-
+      selectTodo(allNodes[i]);
       mouseDownDesk = false;
 
       break;
     }
   }
+
+  if (!clickedNode && !hookSelected_1) {
+    deselectTodo();
+  }
 });
 
-window.addEventListener("pointerup", () => {
+canvas.addEventListener("pointerup", () => {
   if (hookSelected_1 && nodeSelected) {
     for (let i = 0; i < allNodes.length; i++) {
       const targetNode = allNodes[i];
@@ -200,7 +304,7 @@ window.addEventListener("pointerup", () => {
   refreshCanvas();
 });
 
-window.addEventListener("pointermove", (event) => {
+canvas.addEventListener("pointermove", (event) => {
   const rect = canvas.getBoundingClientRect();
 
   mousePosition = {
@@ -209,6 +313,58 @@ window.addEventListener("pointermove", (event) => {
   };
 
   mouseDrag();
+});
+
+addTodoBtn.addEventListener("click", () => {
+  newTodoInput.value = "";
+  addTodoDialog.showModal();
+  newTodoInput.focus();
+});
+
+cancelBtn.addEventListener("click", () => {
+  addTodoDialog.close();
+});
+
+closeDialogBtn.addEventListener("click", () => {
+  addTodoDialog.close();
+});
+
+createBtn.addEventListener("click", () => {
+  const text = newTodoInput.value.trim();
+  if (text === "") return;
+  const node = new TextNode(
+    300 - canvasPosition.x,
+    300 - canvasPosition.y,
+    text,
+  );
+  allNodes.push(node);
+  addTodoDialog.close();
+  selectTodo(node);
+  refreshCanvas();
+});
+
+newTodoInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") {
+    createBtn.click();
+  }
+});
+
+todoTitle.addEventListener("input", () => {
+  if (!focusedNode) return;
+  focusedNode.text = todoTitle.value;
+  ctx.font = `${focusedNode.fontSize}px monospace`;
+  focusedNode.width =
+    ctx.measureText(focusedNode.text).width + focusedNode.fontSize * 2;
+  if (focusedNode.width < 50) {
+    focusedNode.width = 50;
+  }
+  refreshCanvas();
+});
+
+todoDone.addEventListener("change", () => {
+  if (!focusedNode) return;
+  focusedNode.done = todoDone.checked;
+  refreshCanvas();
 });
 
 // --__--__-- INTERACTION & COLLISION --__--__--
@@ -330,12 +486,17 @@ class TextNode {
 
     this.leftHooked = false;
     this.rightHooked = false;
+
+    this.done = false;
   }
 
   draw() {
     const textX =
       this.x + this.width / 2 - ctx.measureText(this.text).width / 2;
     const textY = this.y + 5;
+
+    ctx.save();
+    if (focusedNode == this) ctx.globalAlpha = 0.5;
 
     ctx.fillStyle = palette.node;
 
@@ -384,6 +545,19 @@ class TextNode {
     ctx.fillStyle = "white";
     ctx.font = `${this.fontSize}px monospace`;
     ctx.fillText(this.text, textX, textY);
+    if (this.done) {
+      const textWidth = ctx.measureText(this.text).width;
+      const startX = this.x + this.width / 2 - textWidth / 2;
+      const endX = startX + textWidth;
+      ctx.strokeStyle = palette.nodeRope;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(startX, this.y);
+      ctx.lineTo(endX, this.y);
+      ctx.stroke();
+      ctx.closePath();
+    }
+    ctx.restore();
   }
 
   checkClick() {
@@ -426,9 +600,4 @@ class TextNode {
 
 // --__--__-- INITIALIZATION --__--__--
 resizeCanvas();
-
-allNodes.push(new TextNode(350, 350, "hello notes"));
-allNodes.push(new TextNode(450, 200, "I can be fast"));
-allNodes.push(new TextNode(400, 250, "I can be super slow bro"));
-
 refreshCanvas();
