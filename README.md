@@ -32,11 +32,11 @@ Running Locally
 
 Open the project folder in CMD or your terminal and run:
 
-python -m http.server 8000
+```python -m http.server 8000```
 
 Then open the following address in your browser:
 
-http://localhost:8000
+```http://localhost:8000```
 
 Usage
 
